@@ -105,15 +105,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public SwerveSubsystem() {
 
-        // Gets tabs from Shuffleboard
-        ShuffleboardTab programmerBoard = Shuffleboard.getTab("Programmer Board");
-
-        // Sets up the different displays on suffle board
-        headingShuffleBoard = programmerBoard.add("Robot Heading", 0).getEntry();
-        odometerShuffleBoard = programmerBoard.add("Robot Location", "").getEntry();
-        rollSB = programmerBoard.add("Roll", 0).getEntry();
-        pitchSB = programmerBoard.add("Pitch", 0).getEntry();
-        // wheelAccelerationFinder = new NewAccelerationLimiter(0.5, 0.5);
         speedLimiter = new NewNewAccelLimiter(TargetPosConstants.kForwardMaxAcceleration,
                 TargetPosConstants.kBackwardMaxAcceleration);
 
@@ -148,12 +139,6 @@ public class SwerveSubsystem extends SubsystemBase {
         this.pitchSB = pitchSB;
     }
 
-    /*
-     * public SwerveDriveOdometry getOdometer() {
-     * return odometer;
-     * }
-     */
-
     public SwerveDrivePoseEstimator getPoseEstimator() {
         return robotPoseEstimator;
     }
@@ -184,16 +169,6 @@ public class SwerveSubsystem extends SubsystemBase {
     // Gets the pitch of the robot based on what the IMU percieves.
     public double getPitch() {
         return -gyro.getPitch().getValueAsDouble();
-    }
-
-    public static boolean isOnRed() {
-        // gets the selected team color from the suffleboard
-        Optional<Alliance> ally = DriverStation.getAlliance();
-        if (ally.isPresent()) {
-            return ally.get() == Alliance.Red;
-        }
-
-        return false;
     }
 
     // gets our current velocity relative to the x of the field
@@ -484,7 +459,7 @@ public class SwerveSubsystem extends SubsystemBase {
         logSwerveDesiredStates(desiredStates);
         // if their speed is larger then the physical max speed, it reduces all speeds
         // until they are smaller than physical max speed
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedPercent);
         // sets the modules to desired states
         frontLeft.setDesiredState(desiredStates[0]);
         frontRight.setDesiredState(desiredStates[1]);
@@ -508,11 +483,6 @@ public class SwerveSubsystem extends SubsystemBase {
         // changes heading and module states into an x,y coordinate.
         // Updates everything based on the new information it gathers.
         robotPoseEstimator.updateWithTime(MathSharedStore.getTimestamp(), getRotation2d(), getModulePositions());
-
-        headingShuffleBoard.setDouble(getHeading());
-        odometerShuffleBoard.setString(getPose().getTranslation().toString());
-        pitchSB.setDouble(getPitch());
-        rollSB.setDouble(getRoll());
 
         RobotStatus.pigeonPitch = getPitch();
         RobotStatus.pigeonRoll = getRoll();
@@ -552,7 +522,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("EstimatedAngle",
                 robotPoseEstimator.getEstimatedPosition().getRotation().getDegrees());
         SmartDashboard.putNumber("gyro Yaw", gyro.getYaw().getValueAsDouble());
-        SmartDashboard.putBoolean("isRed", isOnRed());
 
         SmartDashboard.putNumber("frontLeftCurrent", frontLeft.getCurrent());
         SmartDashboard.putNumber("backLeftCurrent", backLeft.getCurrent());

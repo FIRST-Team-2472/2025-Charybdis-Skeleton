@@ -1,32 +1,35 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RunSwerve extends Command{
     SwerveSubsystem swerveSubsystem;
 
-    double xPower, yPower;
+    double xPower, yPower, durationSeconds, turningSpeed;
+    private Timer timer;
     
-    public RunSwerve(SwerveSubsystem swerveSubsystem, double xPower, double yPower) {
+    public RunSwerve(SwerveSubsystem swerveSubsystem, double xPower, double yPower, double turningSpeed, double durationSeconds) {
         this.swerveSubsystem = swerveSubsystem;
 
         this.xPower = xPower;
         this.yPower = yPower;
+        this.durationSeconds = durationSeconds;
+        this.turningSpeed = turningSpeed;
+        timer = new Timer();
 
         addRequirements(swerveSubsystem);
     }
 
     @Override
-    public void initialize(){}
+    public void initialize(){
+        timer.restart();
+    }
 
     @Override
     public void execute() {
-        if (SwerveSubsystem.isOnRed())
-            swerveSubsystem.runModulesFieldRelative(-xPower, -yPower, 0);
-
-        else
-            swerveSubsystem.runModulesFieldRelative(xPower, yPower, 0);
+            swerveSubsystem.runModulesFieldRelative(xPower, yPower, turningSpeed);
     }
 
     public void end(boolean interrupted) {
@@ -35,6 +38,6 @@ public class RunSwerve extends Command{
 
     @Override
     public boolean isFinished() {
-        return false;
+        return timer.hasElapsed(durationSeconds);
     }
 }

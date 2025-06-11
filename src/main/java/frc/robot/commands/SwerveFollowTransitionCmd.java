@@ -3,14 +3,13 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.extras.FieldPose2d;
-import frc.robot.extras.PosPose2d;
+import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveFollowTransitionCmd extends Command {
     SwerveSubsystem swerveSubsystem;
-    PosPose2d startPose, endPose, targetPose;
-    FieldPose2d drivePose;
+    Pose2d startPose, endPose, targetPose;
+    Pose2d drivePose;
     double xTransitionPerFrame, yTransitionPerFrame, angleTransitionPerFrame;
 
     Timer timer = new Timer();
@@ -21,7 +20,7 @@ public class SwerveFollowTransitionCmd extends Command {
      * @param endPose the pose to transition to and end at
      * @param transitionTime the time it should take to fully transition to the end pose
      */
-    public SwerveFollowTransitionCmd(SwerveSubsystem swerveSubsystem, PosPose2d startPose, PosPose2d endPose, double transitionTime){
+    public SwerveFollowTransitionCmd(SwerveSubsystem swerveSubsystem, Pose2d startPose, Pose2d endPose, double transitionTime){
         addRequirements(swerveSubsystem);
 
         this.swerveSubsystem = swerveSubsystem;
@@ -55,8 +54,8 @@ public class SwerveFollowTransitionCmd extends Command {
         }
             
         //creating a new pose by adding the transition per frame to the old one
-        targetPose = new PosPose2d(targetPose.getX() + xTransitionPerFrame, targetPose.getY() + yTransitionPerFrame, Rotation2d.fromDegrees(targetPose.getRotation().getDegrees() + angleTransitionPerFrame));
-        drivePose = targetPose.toFieldPose2d();
+        targetPose = new Pose2d(targetPose.getX() + xTransitionPerFrame, targetPose.getY() + yTransitionPerFrame, Rotation2d.fromDegrees(targetPose.getRotation().getDegrees() + angleTransitionPerFrame));
+        drivePose = targetPose;
     }
 
     @Override

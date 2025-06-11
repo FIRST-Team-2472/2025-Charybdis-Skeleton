@@ -1,11 +1,10 @@
-package frc.robot.commands.defaultCommands;
+package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.extras.PosPose2d;
 import frc.robot.extras.RobotLogManager;
 
 public class SwerveDriveToPointCmd extends Command {
@@ -14,9 +13,9 @@ public class SwerveDriveToPointCmd extends Command {
   private Timer timer;
   private int framesInPosition;
 
-  public SwerveDriveToPointCmd(SwerveSubsystem m_SwerveSubsystem, PosPose2d targetPosition) {
+  public SwerveDriveToPointCmd(SwerveSubsystem m_SwerveSubsystem, Pose2d targetPosition) {
     this.swerveSubsystem = m_SwerveSubsystem;
-    this.targetPosition = targetPosition.toFieldPose2d();
+    this.targetPosition = targetPosition;
     
     timer = new Timer();
 

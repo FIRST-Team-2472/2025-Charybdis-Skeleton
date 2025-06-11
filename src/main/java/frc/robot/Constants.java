@@ -91,14 +91,14 @@ public final class Constants {
 
         // Max physical speed of our motors. Required for motor speed caculations
         // To find set the modules to 100% and see what speed cap out at
-        public static final double kPhysicalMaxSpeedMetersPerSecond = 4.72;
+        public static final double kPhysicalMaxSpeedPercent = 1;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 7 * 2 * Math.PI;
 
     }
 
     public static final class TargetPosConstants {
         // Motion constants for target position drive mode
-        public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 1;//was 4 (changed 2/20/25);
+        public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedPercent / 1;//was 4 (changed 2/20/25);
         public static final double kMaxAngularSpeed = //
                 DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 16;
 

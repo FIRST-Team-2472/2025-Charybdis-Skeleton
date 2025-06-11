@@ -57,12 +57,6 @@ public class SwerveJoystickCmd extends Command {
             ySpeed *= .3;
             turningSpeed *= .3;
         }
-
-        // 4. invert direction if on red alliance
-        if(SwerveSubsystem.isOnRed()){
-            xSpeed *= -1;
-            ySpeed *= -1;
-        }
         
         swerveSubsystem.runModulesFieldRelative(xSpeed, ySpeed, turningSpeed);
     }
