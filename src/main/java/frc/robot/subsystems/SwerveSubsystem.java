@@ -2,37 +2,26 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.geometry.Transform2d;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.MathSharedStore;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -40,17 +29,9 @@ import frc.robot.Constants.SensorConstants;
 import frc.robot.Constants.TargetPosConstants;
 import frc.robot.RobotStatus;
 import frc.robot.MotorPowerController;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.SensorConstants;
-import frc.robot.Constants.TargetPosConstants;
-import frc.robot.Constants.TeleDriveConstants;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.LimelightHelpers;
-import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.extras.NewNewAccelLimiter;
 import frc.robot.extras.SwerveModule;
-import frc.robot.Constants.VisionConstants.*;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -91,7 +72,6 @@ public class SwerveSubsystem extends SubsystemBase {
             DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
 
     private Pigeon2 gyro = new Pigeon2(SensorConstants.kPigeonID);
-    private double frontLeftEncoderLast, frontRightEncoderLast, backLeftEncoderLast, backRightEncoderLast = 0;
     // Sets the preliminary odometry. This gets refined by the PhotonVision class,
     // but this is the original.
     // private final SwerveDriveOdometry odometer = new
@@ -105,16 +85,11 @@ public class SwerveSubsystem extends SubsystemBase {
             VecBuilder.fill(0.1, 0.1, Double.MAX_VALUE));
             
     private GenericEntry headingShuffleBoard, odometerShuffleBoard, rollSB, pitchSB;
-    private Limelight limelightSubsystem;
-    private int periods = 0; // period counter used for limelight update timing
 
     private NewNewAccelLimiter speedLimiter;
     public PIDController thetaController;
 
     public MotorPowerController speedPowerController, turningPowerController;
-
-    private static final SendableChooser<String> colorChooser = new SendableChooser<>();
-    private final String red = "Red", blue = "Blue";
 
     double lastXDrive = 0;
     double lastYDrive = 0;
@@ -129,7 +104,6 @@ public class SwerveSubsystem extends SubsystemBase {
     ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
     public SwerveSubsystem() {
-        this.limelightSubsystem = Limelight.getInstance();
 
         // Gets tabs from Shuffleboard
         ShuffleboardTab programmerBoard = Shuffleboard.getTab("Programmer Board");
@@ -139,7 +113,7 @@ public class SwerveSubsystem extends SubsystemBase {
         odometerShuffleBoard = programmerBoard.add("Robot Location", "").getEntry();
         rollSB = programmerBoard.add("Roll", 0).getEntry();
         pitchSB = programmerBoard.add("Pitch", 0).getEntry();
-        programmerBoard.add("Pigeon Orientation", gyro.getAngle()).getEntry();
+        programmerBoard.add("Pigeon Orientation", gyro.getYaw()).getEntry();
         // wheelAccelerationFinder = new NewAccelerationLimiter(0.5, 0.5);
         speedLimiter = new NewNewAccelLimiter(TargetPosConstants.kForwardMaxAcceleration,
                 TargetPosConstants.kBackwardMaxAcceleration);
@@ -163,7 +137,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveSubsystem(Pigeon2 gyro, // This constructor is used for testing
             SwerveModule frontLeft, SwerveModule frontRight, SwerveModule backLeft, SwerveModule backRight,
             GenericEntry headingShuffleBoard, GenericEntry odometerShuffleBoard, GenericEntry rollSB,
-            GenericEntry pitchSB, int periods) {
+            GenericEntry pitchSB) {
         this.gyro = gyro;
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
@@ -173,8 +147,6 @@ public class SwerveSubsystem extends SubsystemBase {
         this.odometerShuffleBoard = odometerShuffleBoard;
         this.rollSB = rollSB;
         this.pitchSB = pitchSB;
-        this.limelightSubsystem = Limelight.getInstance();
-        this.periods = periods;
     }
 
     /*
@@ -352,7 +324,6 @@ public class SwerveSubsystem extends SubsystemBase {
         xError = targetPosition.getX() - getPose().getX();// getPose().getX() - targetPosition.getX();
         yError = targetPosition.getY() - getPose().getY();// getPose().getY() - targetPosition.getY();
         distanceError = Math.sqrt(xError * xError + yError * yError);
-        double lastSpeed = speedPowerController.calculate(0, distanceError);
         // xPowerController.calculate(getPose().getX(), targetPosition.getX());
         // yPowerController.calculate(getPose().getY(), targetPosition.getY());
         Rotation2d angleDifference = robotPoseEstimator.getEstimatedPosition().getRotation()
@@ -530,50 +501,6 @@ public class SwerveSubsystem extends SubsystemBase {
         backRight.resetEncoders();
     }
 
-    public void updateOdometryWithVision() {
-        LimelightHelpers.SetRobotOrientation(
-                VisionConstants.kFrontLimelightName,
-                robotPoseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-                gyro.getYaw().getValueAsDouble() - lastYawValue,
-                0,
-                0,
-                0,
-                0);
-        LimelightHelpers.SetRobotOrientation(
-                VisionConstants.kSideLimelightName,
-                robotPoseEstimator.getEstimatedPosition().getRotation().getDegrees(),
-                gyro.getYaw().getValueAsDouble() - lastYawValue,
-                0,
-                0,
-                0,
-                0);
-        
-        lastYawValue = gyro.getYaw().getValueAsDouble();
-
-        PoseEstimate estimate = limelightSubsystem.getTrustedPose();
-        if (estimate != null) {
-            SmartDashboard.putBoolean("NullEstimate", false);
-            boolean doRejectUpdate = false;
-            if (Math.abs(gyro.getAngularVelocityZWorld().getValueAsDouble()) > 720) {
-                doRejectUpdate = true;
-            }
-            if (estimate.tagCount == 0) {
-                doRejectUpdate = true;
-            }
-            SmartDashboard.putNumber("estimate.tagCount", estimate.tagCount);
-            SmartDashboard.putBoolean("rejecting update", doRejectUpdate);
-            if (!doRejectUpdate) {
-                SmartDashboard.putBoolean("working", true);
-                SmartDashboard.putNumber("limelight X", estimate.pose.getX());
-                SmartDashboard.putNumber("limelight Y", estimate.pose.getY());
-                robotPoseEstimator.addVisionMeasurement(estimate.pose, estimate.timestampSeconds);
-            } else {
-            }
-        } else {
-            SmartDashboard.putBoolean("NullEstimate", true);
-        }
-    }
-
     @Override
     public void periodic() {
         // this method comes from the subsystem class we inherited. Runs constantly
@@ -591,8 +518,6 @@ public class SwerveSubsystem extends SubsystemBase {
         RobotStatus.pigeonPitch = getPitch();
         RobotStatus.pigeonRoll = getRoll();
         RobotStatus.pigeonYaw = getHeading();
-
-        updateOdometryWithVision();
 
         SmartDashboard.putNumber("frontLeft Encoder",
                 frontLeft.absoluteEncoder.getAbsolutePosition().getValueAsDouble());
@@ -634,11 +559,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("backLeftCurrent", backLeft.getCurrent());
         SmartDashboard.putNumber("frontRightCurrent", frontRight.getCurrent());
         SmartDashboard.putNumber("backRightCurrent", backRight.getCurrent());
-
-        frontLeftEncoderLast = frontLeft.getDrivePositionTwo();
-        frontRightEncoderLast = frontRight.getDrivePositionTwo();
-        backLeftEncoderLast = backLeft.getDrivePositionTwo();
-        backRightEncoderLast = backRight.getDrivePositionTwo();
 
         logSwerveStates();
         logOdometry();

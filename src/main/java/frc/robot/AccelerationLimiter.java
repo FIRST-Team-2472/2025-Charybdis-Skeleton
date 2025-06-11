@@ -1,14 +1,12 @@
 package frc.robot;
 
-import com.ctre.phoenix6.signals.MagnetHealthValue;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.WPIUtilJNI;
 
-public class NewAccelerationLimiter {
+public class AccelerationLimiter {
     private double accelerationChange, lastAcceleration, positiveRateLimit, negativeRateLimit, previousSpeed, previousTime, elapsedTime, currentTime, wantedAcceleration, clampedAcceleration, clampedSpeed;
 
-    public NewAccelerationLimiter(double positiveRateLimit, double negativeRateLimit){
+    public AccelerationLimiter(double positiveRateLimit, double negativeRateLimit){
         this.positiveRateLimit = positiveRateLimit;
         this.negativeRateLimit = negativeRateLimit;
         previousSpeed = 0;

@@ -15,7 +15,6 @@ public class RunSwerve extends Command{
         this.yPower = yPower;
 
         addRequirements(swerveSubsystem);
-        // these are guessed numbers, they need to be tuned
     }
 
     @Override

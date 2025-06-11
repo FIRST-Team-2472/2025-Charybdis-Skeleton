@@ -23,39 +23,6 @@ public final class Constants {
     public static final class LoggingConstants{
         public static final Level CURRENT_LOG_LEVEL = Level.INFO;
     }
-    
-    public static final class ElevatorConstants {
-        public static final int kLeftElevatorMotorID = 16;
-        public static final int kRightElevatorMotorID = 40;
-
-        public static final double kElevatorGearRatio = 1.0 /20; // 20 rotations of the motor to one shaft rotation the 1.0 is so it does decimal not integer division
-        public static final double kSprocketCircumference = 5.538628;// slightly rounded and in inches
-        public static final double kElevatorMotorRotationsToInches = kSprocketCircumference * kElevatorGearRatio * -2; // times two because its a two stage elevator negative because the encoder reads negative when going up
-
-        public static final double kElevatorL4Height = 57.5;
-        public static final double kElevatorL3Height = 32;
-        public static final double kElevatorL2Height = 16;
-        public static final double kElevatorL1Height = 9;
-
-        public static final double kElevatorMaxHeight = 57.5;
-    }
-    public static final class ClimberConstants {
-        public static final int kClimberMotorID = 19; // change later
-        
-        public static final double kClimberGearRatio = 1; // change later
-        public static final double kClimberOutAngle = 90; // change later
-        public static final double kClimberInAngle = 270; // change later
-    }
-    public static final class CoralDispenserConstants {
-        public static final int kLeftMotorID = 17; 
-        public static final int kRightMotorID = 44; 
-        public static final double kDispenseSpeedThreshold = .3;
-    }
-    public static final class AlgaeConstants {
-        public static final int kPivotMotorID = 18;
-        public static final double kPivotGearRatio = 1/2;
-        public static final int kSpinMotorID = 20;
-    }
 
     public static final class ModuleConstants {
         public static final double kWheelDiameterMeters = .0952492;
@@ -133,62 +100,6 @@ public final class Constants {
 
     }
 
-    //never used ANYWHERE
-    public static final class TeleDriveConstants {
-        // Motion constants for joystick drive mode -> dependant on max speed
-        // Max x/y speed of robot in this drive mode
-        public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 1; //used to be /4
-        // Max rotation speed of robot in this drive mode
-        public static final double kMaxAngularSpeedRadiansPerSecond = //
-                DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 16;
-        // Max x/y acceleration of robot in this drive mode
-        public static final double kMaxAccelerationUnitsPerSecond = 8;
-        // Max rotational acceleration of robot in this drive mode
-        public static final double kMaxAngularAccelerationUnitsPerSecond = Math.PI * 2;
-    }
-
-    //never used ANYWHERE
-    public static final class AutoConstants {
-        // Motion constants for sequential path drive mode
-        public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 9.44; // was 9.44; (changed 2/20/25)//was 4 before 9.44 (changed somtime before 2/20/25)
-        public static final double kMaxAngularSpeedRadiansPerSecond = //
-                DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 14;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 1;// was 5.5
-        public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 2;
-        public static final double kPXController = 1.5;
-        public static final double kPYController = 1.5;
-        public static final double kPThetaController = 1.5;
-
-        public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
-                new TrapezoidProfile.Constraints(
-                        kMaxAngularSpeedRadiansPerSecond,
-                        kMaxAngularAccelerationRadiansPerSecondSquared);
-
-        public static final double TRANSLATION_KP = 0.7; 
-        public static final double TRANSLATION_KI = 0; 
-        public static final double TRANSLATION_KD = 0;
-                    
-        public static final double ROTATION_KP = 0.7;
-        public static final double ROTATION_KI = 0;
-        public static final double ROTATION_KD = 0;
-                    
-        public static final double MAX_MODULE_SPEED = 2;
-        public static final double DRIVE_BASE_RADIUS_METERS = Math.hypot(DriveConstants.kTrackWidth/2,
-            DriveConstants.kWheelBase/2);
-            
-        /*  PathPlanner Holonomic Controller - Not used anymore
-        public static final PPHolonomicDriveController HOLONOMIC_PATH_FOLLOWER_CONFIG = new PPHolonomicDriveController(
-        new PIDConstants(
-            TRANSLATION_KP,
-            TRANSLATION_KI,
-            TRANSLATION_KD), // Translation PID constants
-        new PIDConstants(
-            ROTATION_KP,
-            ROTATION_KI,
-            ROTATION_KD) //Time between code runs
-        ); */
-    }
-
     public static final class TargetPosConstants {
         // Motion constants for target position drive mode
         public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 1;//was 4 (changed 2/20/25);
@@ -231,20 +142,10 @@ public final class Constants {
 
         public static final double sizeOfFieldMetersX = 17.548225;
         public static final double sizeOfFieldMetersY = 8.0518;
-
-        public static int kAlgeaABSEncoderDIOPort = 0; // set later
-        public static int kClimberABSEncoderDIOPort = 1; // set later
     }
     public final class VisionConstants {
         public static String kFrontLimelightName = null;//"limelight-side";
         public static String kSideLimelightName = "limelight-obj";
         public static double kMaxAllowedTagDistance = 5.0;
     }
-    public final class LEDConstants {
-        public static int kBackLEDStripLEDCount = 20; // I forgot
-        public static int kElevatorLEDStripLEDCount = 9; // I forgot
-        public static int kLEDPWMPort = 1;
-        public static Distance kLEDSpacing = Meters.of(1.0 / 6); // 6 per meter 
-        public static LinearVelocity kRainbowScrollSpeed = MetersPerSecond.of(3);
-    }   
 }

@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -32,12 +33,9 @@ public class SwerveModule {
 
         driveMotor = new TalonFX(driveMotorId);
         turningMotor = new TalonFX(turningMotorId);
-        TalonFXConfiguration motorConfig = new TalonFXConfiguration();
-        driveMotor.getConfigurator().apply(new TalonFXConfiguration());
-        turningMotor.getConfigurator().apply(new TalonFXConfiguration());
-
-        driveMotor.setInverted(driveMotorReversed);
-        turningMotor.setInverted(turningMotorReversed);
+        
+        driveMotor.getConfigurator().apply(new TalonFXConfiguration().MotorOutput.withInverted(driveMotorReversed ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive));
+        turningMotor.getConfigurator().apply(new TalonFXConfiguration().MotorOutput.withInverted(turningMotorReversed ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive));
 
         absoluteEncoder = new CANcoder(absoluteEncoderId);
         this.absoluteEncoderOffset = absoluteEncoderOffset;
@@ -119,7 +117,7 @@ public class SwerveModule {
             return;
         }
         // make the swerve module doesn't ever turn more than 90 degrees instead of 180;
-        state = SwerveModuleState.optimize(state, getState().angle);
+        state.optimize(getState().angle);
 
         //driveMotor.set(state.speedMetersPerSecond/DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
         driveMotor.set(state.speedMetersPerSecond);
