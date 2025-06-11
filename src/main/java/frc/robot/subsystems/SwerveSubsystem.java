@@ -113,7 +113,6 @@ public class SwerveSubsystem extends SubsystemBase {
         odometerShuffleBoard = programmerBoard.add("Robot Location", "").getEntry();
         rollSB = programmerBoard.add("Roll", 0).getEntry();
         pitchSB = programmerBoard.add("Pitch", 0).getEntry();
-        programmerBoard.add("Pigeon Orientation", gyro.getYaw()).getEntry();
         // wheelAccelerationFinder = new NewAccelerationLimiter(0.5, 0.5);
         speedLimiter = new NewNewAccelLimiter(TargetPosConstants.kForwardMaxAcceleration,
                 TargetPosConstants.kBackwardMaxAcceleration);
