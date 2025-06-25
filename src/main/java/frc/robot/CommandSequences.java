@@ -12,8 +12,8 @@ public class CommandSequences {
 
     public CommandSequences() {
     }
-    public Command TestCommandOne(){
-        return null;
+    public Command TestCommandOne(SwerveSubsystem swerveSubsystem){ // 10 feet forward
+        return new SequentialCommandGroup(new SwerveDriveToPointCmd(swerveSubsystem, new Pose2d(3.048, 0, new Rotation2d())));
     }
 
     public Pose2d simplePose(double x, double y, double angleDegrees) {

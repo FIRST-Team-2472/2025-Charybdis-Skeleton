@@ -74,7 +74,7 @@ public class RobotContainer {
       switch (m_autoSelected) {
         case testAutoOne:
           return new SequentialCommandGroup(
-              commandSequences.TestCommandOne());
+              commandSequences.TestCommandOne(swerveSubsystem));
       }
     }
 
