@@ -100,7 +100,8 @@ public class SwerveSubsystem extends SubsystemBase {
      */
 
     double xError, yError, xSpeed, ySpeed, distanceError, angleDifference, speed, velocityX, velocityY, lastYawValue;
-
+    double frontLeftLowRefreshPosition, frontRightLowRefreshPosition, backLeftLowRefreshPosition, backRightLowRefreshPosition;
+    double frontLeftHighRefreshPosition, frontRightHighRefreshPosition, backLeftHighRefreshPosition, backRightHighRefreshPosition;
     ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
     public SwerveSubsystem() {
@@ -488,23 +489,50 @@ public class SwerveSubsystem extends SubsystemBase {
         RobotStatus.pigeonRoll = getRoll();
         RobotStatus.pigeonYaw = getHeading();
 
-        SmartDashboard.putNumber("frontLeft Encoder",
+        SmartDashboard.putNumber("frontLeft turning Encoder",
                 frontLeft.absoluteEncoder.getAbsolutePosition().getValueAsDouble());
-        SmartDashboard.putNumber("frontRight Encoder",
+        SmartDashboard.putNumber("frontRight turning Encoder",
                 frontRight.absoluteEncoder.getAbsolutePosition().getValueAsDouble());
-        SmartDashboard.putNumber("BackLeft Encoder", backLeft.absoluteEncoder.getAbsolutePosition().getValueAsDouble());
-        SmartDashboard.putNumber("BackRight Encoder",
+        SmartDashboard.putNumber("BackLeft turning Encoder", backLeft.absoluteEncoder.getAbsolutePosition().getValueAsDouble());
+        SmartDashboard.putNumber("BackRight turning Encoder",
                 backRight.absoluteEncoder.getAbsolutePosition().getValueAsDouble());
+        
+        SmartDashboard.putNumber("BackLeftDrive Velocity", backLeft.getDrivePosition() - backLeftLowRefreshPosition);
+        SmartDashboard.putNumber("BackRightDrive Velocity", backRight.getDrivePosition() - backRightLowRefreshPosition);
+        SmartDashboard.putNumber("FrontLeftDrive Velocity", frontLeft.getDrivePosition() - frontLeftLowRefreshPosition);
+        SmartDashboard.putNumber("FrontRightDrive Velocity", frontRight.getDrivePosition() - frontRightLowRefreshPosition);
+
+        SmartDashboard.putNumber("BackLeftDrive high Velocity", backLeft.getDrivePositionTwo() - backLeftHighRefreshPosition);
+        SmartDashboard.putNumber("BackRightDrive high Velocity", backRight.getDrivePositionTwo() - backRightHighRefreshPosition);
+        SmartDashboard.putNumber("FrontLeftDrive high Velocity", frontLeft.getDrivePositionTwo() - frontLeftHighRefreshPosition);
+        SmartDashboard.putNumber("FrontRightDrive high Velocity", frontRight.getDrivePositionTwo() - frontRightHighRefreshPosition);
+
+        frontLeftLowRefreshPosition = frontLeft.getDrivePosition();
+        frontRightLowRefreshPosition = frontRight.getDrivePosition();
+        backLeftLowRefreshPosition = backLeft.getDrivePosition();
+        backRightLowRefreshPosition = backRight.getDrivePosition();
+
+        frontLeftHighRefreshPosition = frontLeft.getDrivePositionTwo();
+        frontRightHighRefreshPosition = frontRight.getDrivePositionTwo();
+        backLeftHighRefreshPosition = backLeft.getDrivePositionTwo();
+        backRightHighRefreshPosition = backRight.getDrivePositionTwo();
 
         SmartDashboard.putNumber("BackLeftDriveEncoder", backLeft.getDrivePosition());
         SmartDashboard.putNumber("BackRightDriveEncoder", backRight.getDrivePosition());
         SmartDashboard.putNumber("FrontLeftDriveEncoder", frontLeft.getDrivePosition());
         SmartDashboard.putNumber("FrontRightDriveEncoder", frontRight.getDrivePosition());
 
+        SmartDashboard.putNumber("front left drive encoder high refresh", frontLeft.getDrivePositionTwo());
+        SmartDashboard.putNumber("front right drive encoder high refresh", frontRight.getDrivePositionTwo());
+        SmartDashboard.putNumber("back left drive encoder high refresh", backLeft.getDrivePositionTwo());
+        SmartDashboard.putNumber("back right drive encoder high refresh", backRight.getDrivePositionTwo());
+        
+
         SmartDashboard.putNumber("read frontLeft Encoder", frontLeft.getAbsolutePosition());
         SmartDashboard.putNumber("read frontRight Encoder", frontRight.getAbsolutePosition());
         SmartDashboard.putNumber("read BackLeft Encoder", backLeft.getAbsolutePosition());
         SmartDashboard.putNumber("read BackRight Encoder", backRight.getAbsolutePosition());
+
         // SmartDashboard.putNumber("odometerX", odometer.getPoseMeters().getX());
         SmartDashboard.putNumber("EstimatedX", robotPoseEstimator.getEstimatedPosition().getX());
         // SmartDashboard.putNumber("odometerY", odometer.getPoseMeters().getY());

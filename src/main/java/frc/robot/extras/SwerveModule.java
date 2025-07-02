@@ -67,7 +67,7 @@ public class SwerveModule {
         return driveMotor.getRotorPosition().getValueAsDouble() * ModuleConstants.kDriveEncoderRot2Meter;
     }
     public double getDrivePositionTwo(){
-        return driveMotor.getPosition().getValueAsDouble();
+        return driveMotor.getPosition().getValueAsDouble() * ModuleConstants.kDriveEncoderRot2Meter;
     }
 
     public double getTurningPosition() {

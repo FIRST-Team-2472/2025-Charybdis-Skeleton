@@ -23,7 +23,7 @@ public class RobotContainer {
 
   private String m_autoSelected;
   private final String
-    testAutoOne = "Test Auto One";
+    testAutoOne = "Test Auto One", testDriveMediumSpeedForward = "drive medium speed forward";
 
 
   private final SendableChooser<String> autoChooser = new SendableChooser<>();
@@ -49,6 +49,7 @@ public class RobotContainer {
         () -> rightJoystick.getRawButton(4)));
 
     autoChooser.addOption(testAutoOne, testAutoOne);
+    autoChooser.addOption(testDriveMediumSpeedForward, testDriveMediumSpeedForward);
 
 
     if (DriverStation.isFMSAttached() == true) {
@@ -75,6 +76,8 @@ public class RobotContainer {
         case testAutoOne:
           return new SequentialCommandGroup(
               commandSequences.TestCommandOne(swerveSubsystem));
+        case testDriveMediumSpeedForward:
+          return new SequentialCommandGroup(commandSequences.DriveMediumSpeedForward(swerveSubsystem));
       }
     }
 
