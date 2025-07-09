@@ -106,7 +106,7 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDrivePosition(), Rotation2d.fromDegrees(getAbsolutePosition()));
+        return new SwerveModulePosition(getDrivePositionTwo(), Rotation2d.fromDegrees(getAbsolutePosition()));
     }
 
     // a swerve module state is composed of a speed and direction
