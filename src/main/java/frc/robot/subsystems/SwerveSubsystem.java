@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
@@ -83,6 +84,31 @@ public class SwerveSubsystem extends SubsystemBase {
             getRotation2d(), getModulePositions(), new Pose2d(),
             VecBuilder.fill(0.5, 0.5, 0.1),
             VecBuilder.fill(0.1, 0.1, Double.MAX_VALUE));
+    
+    private final SwerveDriveOdometry frontLeftWheelPosition = new SwerveDriveOdometry(
+        DriveConstants.kDriveKinematics,
+        getRotation2d(),
+        getFrontLeftModulePositions(),
+        new Pose2d()
+    );
+    private final SwerveDriveOdometry frontRightWheelPosition = new SwerveDriveOdometry(
+        DriveConstants.kDriveKinematics,
+        getRotation2d(),
+        getFrontRightModulePositions(),
+        new Pose2d()
+    );
+    private final SwerveDriveOdometry backLeftWheelPosition = new SwerveDriveOdometry(
+        DriveConstants.kDriveKinematics,
+        getRotation2d(),
+        getBackLeftModulePositions(),
+        new Pose2d()
+    );
+    private final SwerveDriveOdometry backRightWheelPosition = new SwerveDriveOdometry(
+        DriveConstants.kDriveKinematics,
+        getRotation2d(),
+        getBackRightModulePositions(),
+        new Pose2d()
+    );
             
     private GenericEntry headingShuffleBoard, odometerShuffleBoard, rollSB, pitchSB;
 
@@ -356,6 +382,30 @@ public class SwerveSubsystem extends SubsystemBase {
                 backRight.getPosition() };
         return temp;
     }
+    public SwerveModulePosition[] getFrontLeftModulePositions() {
+        // Finds the position of each individual module based on the encoder values.
+        SwerveModulePosition[] temp = { frontLeft.getPosition(), frontLeft.getPosition(), frontLeft.getPosition(),
+            frontLeft.getPosition() };
+        return temp;
+    }
+    public SwerveModulePosition[] getFrontRightModulePositions() {
+        // Finds the position of each individual module based on the encoder values.
+        SwerveModulePosition[] temp = { frontRight.getPosition(), frontRight.getPosition(), frontRight.getPosition(),
+            frontRight.getPosition() };
+        return temp;
+    }
+    public SwerveModulePosition[] getBackLeftModulePositions() {
+        // Finds the position of each individual module based on the encoder values.
+        SwerveModulePosition[] temp = { backLeft.getPosition(), backLeft.getPosition(), backLeft.getPosition(),
+            backLeft.getPosition() };
+        return temp;
+    }
+    public SwerveModulePosition[] getBackRightModulePositions() {
+        // Finds the position of each individual module based on the encoder values.
+        SwerveModulePosition[] temp = { backRight.getPosition(), backRight.getPosition(), backRight.getPosition(),
+            backRight.getPosition() };
+        return temp;
+    }
 
     /*
      * public void runModulesFieldRelative(double xSpeed, double ySpeed, double
@@ -483,6 +533,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
         // changes heading and module states into an x,y coordinate.
         // Updates everything based on the new information it gathers.
+        frontLeftWheelPosition.update(getRotation2d(), getFrontLeftModulePositions());
+        frontRightWheelPosition.update(getRotation2d(), getFrontRightModulePositions());
+        backLeftWheelPosition.update(getRotation2d(), getBackLeftModulePositions());
+        backRightWheelPosition.update(getRotation2d(), getBackRightModulePositions());
         robotPoseEstimator.updateWithTime(MathSharedStore.getTimestamp(), getRotation2d(), getModulePositions());
 
         RobotStatus.pigeonPitch = getPitch();
@@ -506,6 +560,15 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("BackRightDrive high Velocity", backRight.getDrivePositionTwo() - backRightHighRefreshPosition);
         SmartDashboard.putNumber("FrontLeftDrive high Velocity", frontLeft.getDrivePositionTwo() - frontLeftHighRefreshPosition);
         SmartDashboard.putNumber("FrontRightDrive high Velocity", frontRight.getDrivePositionTwo() - frontRightHighRefreshPosition);
+
+        SmartDashboard.putNumber("frontLeft X", frontLeftWheelPosition.getPoseMeters().getX());
+        SmartDashboard.putNumber("frontLeft Y", frontLeftWheelPosition.getPoseMeters().getY());
+        SmartDashboard.putNumber("frontRight X", frontRightWheelPosition.getPoseMeters().getX());
+        SmartDashboard.putNumber("frontRight Y", frontRightWheelPosition.getPoseMeters().getY());
+        SmartDashboard.putNumber("backLeft X", backLeftWheelPosition.getPoseMeters().getX());
+        SmartDashboard.putNumber("backLeft Y", backLeftWheelPosition.getPoseMeters().getY());
+        SmartDashboard.putNumber("backRight X", backRightWheelPosition.getPoseMeters().getX());
+        SmartDashboard.putNumber("backRight Y", backRightWheelPosition.getPoseMeters().getY());
 
         frontLeftLowRefreshPosition = frontLeft.getDrivePosition();
         frontRightLowRefreshPosition = frontRight.getDrivePosition();
