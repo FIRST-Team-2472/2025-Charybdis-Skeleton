@@ -18,10 +18,10 @@ public class CommandSequences {
         return new SequentialCommandGroup(new SwerveDriveToPointCmd(swerveSubsystem, new Pose2d(2, 0, new Rotation2d())));
     }
     public Command DriveMediumSpeedForward(SwerveSubsystem swerveSubsystem){
-        return new SequentialCommandGroup(new RunSwerve(swerveSubsystem, .25, 0, 0, 3));
+        return new SequentialCommandGroup(new RunSwerve(swerveSubsystem, .25, 0, 0, 6));
     }
     public Command DriveMediumSpeedForwardWithAccelLimiter(SwerveSubsystem swerveSubsystem){
-        return new SequentialCommandGroup(new RunSwerveWithAccelLimiter(swerveSubsystem, .5, 0, 0, 60));
+        return new SequentialCommandGroup(new RunSwerveWithAccelLimiter(swerveSubsystem, .5, 0, 0, 6));
     }
 
     public Pose2d simplePose(double x, double y, double angleDegrees) {
