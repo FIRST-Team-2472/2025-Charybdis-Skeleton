@@ -9,6 +9,7 @@ public class RobotStatus {
     public static double pigeonRoll = 0;
 
     public static Pose2d odometryBotPose;
+    public static double kTimeOfFlightDistance;
 
     public static Pose2d[] LimeLightBotPoses;
     public static double[] LimeLightConfidences;

@@ -34,7 +34,12 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.extras.NewNewAccelLimiter;
 import frc.robot.extras.SwerveModule;
 
+import edu.wpi.first.wpilibj.I2C;
+import frc.robot.extras.VL53L4CD;
+
 public class SwerveSubsystem extends SubsystemBase {
+
+    VL53L4CD timeOfFlightSensor = new VL53L4CD(I2C.Port.kOnboard);
 
     private SwerveModule frontLeft = new SwerveModule(
             DriveConstants.kFrontLeftDriveMotorPort,
@@ -131,6 +136,8 @@ public class SwerveSubsystem extends SubsystemBase {
     ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
 
     public SwerveSubsystem() {
+        timeOfFlightSensor.init();
+        timeOfFlightSensor.startRanging();
 
         speedLimiter = new NewNewAccelLimiter(TargetPosConstants.kForwardMaxAcceleration,
                 TargetPosConstants.kBackwardMaxAcceleration);
@@ -528,6 +535,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        double temp = timeOfFlightSensor.measure().distanceMillimeters;
+        RobotStatus.kTimeOfFlightDistance = temp;
+        SmartDashboard.putNumber("distance sensor", temp);
+        
         // this method comes from the subsystem class we inherited. Runs constantly
         // while robot is on
 
